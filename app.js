@@ -2,24 +2,17 @@ new Vue({
   el: '#app',
 
   data: {
-    // UI state
     showCart: false,
     showCheckoutForm: false,
     showInfoModal: false,
 
-    // search & sort
     searchTerm: '',
     sortBy: '',
     sortOrder: 'asc',
 
-    // data
     lessons: [],
     cart: [],
-    customer: {
-      name: '',
-      email: '',
-      phone: ''
-    },
+    customer: { name: '', email: '', phone: '' },
     selectedClass: {}
   },
 
@@ -45,13 +38,11 @@ new Vue({
         cls.price.toLowerCase().includes(term)
       );
 
-      // sorting
       if (this.sortBy) {
         result.sort((a, b) => {
           let A = a[this.sortBy];
           let B = b[this.sortBy];
 
-          // numeric sort for price / seats
           if (this.sortBy === 'price') {
             A = parseInt(A.replace('AED ', ''));
             B = parseInt(B.replace('AED ', ''));
@@ -59,16 +50,14 @@ new Vue({
             A = Number(A);
             B = Number(B);
           } else {
-            // string sort for subject / location
-            A = A.toString().toLowerCase();
-            B = B.toString().toLowerCase();
-            const comp = A.localeCompare(B);
-            return this.sortOrder === 'asc' ? comp : -comp;
+            A = A.toLowerCase();
+            B = B.toLowerCase();
+            return this.sortOrder === 'asc'
+              ? A.localeCompare(B)
+              : B.localeCompare(A);
           }
 
-          if (A < B) return this.sortOrder === 'asc' ? -1 : 1;
-          if (A > B) return this.sortOrder === 'asc' ? 1 : -1;
-          return 0;
+          return this.sortOrder === 'asc' ? A - B : B - A;
         });
       }
 
@@ -78,43 +67,44 @@ new Vue({
 
   methods: {
     async fetchLessons() {
-      try {
-        const res = await fetch('http://localhost:3000/lessons');
-        this.lessons = await res.json();
-      } catch (err) {
-        console.error('Error fetching lessons', err);
-      }
+      const res = await fetch('http://localhost:3000/lessons');
+      this.lessons = await res.json();
     },
 
     toggleSort() {
-      if (!this.sortBy) {
-        alert('Please select a sort option first');
-        return;
-      }
+      if (!this.sortBy) return alert('Select sort option');
       this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
     },
 
     highlightText(text) {
       if (!this.searchTerm) return text;
-      const regex = new RegExp(`(${this.searchTerm})`, 'gi');
-      return text.replace(regex, '<mark>$1</mark>');
+      return text.replace(
+        new RegExp(`(${this.searchTerm})`, 'gi'),
+        '<mark>$1</mark>'
+      );
     },
 
     addToCart(cls) {
       if (cls.seats <= 0) return;
 
-      this.cart.push(cls);
+      this.cart.push({
+        _id: cls._id,
+        subject: cls.subject,
+        price: cls.price,
+        image: cls.image
+      });
+
       cls.seats -= 1;
-      this.showCart = true; // open cart as soon as item added
+      this.showCart = true;
     },
 
     removeFromCart(index) {
-      this.cart[index].seats += 1;
-      this.cart.splice(index, 1);
+      const item = this.cart[index];
+      const lesson = this.lessons.find(l => l._id === item._id);
+      if (lesson) lesson.seats += 1;
 
-      if (!this.cart.length) {
-        this.showCart = false;
-      }
+      this.cart.splice(index, 1);
+      if (!this.cart.length) this.showCart = false;
     },
 
     toggleCart() {
@@ -122,10 +112,7 @@ new Vue({
     },
 
     openCheckoutForm() {
-      if (!this.cart.length) {
-        alert('Cart is empty');
-        return;
-      }
+      if (!this.cart.length) return alert('Cart empty');
       this.showCheckoutForm = true;
     },
 
@@ -142,47 +129,22 @@ new Vue({
     },
 
     async confirmCheckout() {
-      if (!this.customer.name.trim() || !this.customer.phone.trim()) {
-        alert('Please enter your name and phone number.');
-        return;
-      }
-      if (!this.validateEmail(this.customer.email)) {
-        alert('Please enter a valid email.');
-        return;
-      }
-      if (!this.cart.length) {
-        alert('Your cart is empty.');
-        return;
-      }
+      if (!this.customer.name || !this.customer.phone) return alert('Missing details');
+      if (!this.validateEmail(this.customer.email)) return alert('Invalid email');
 
-      try {
-        await fetch('http://localhost:3000/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            customer: this.customer,
-            items: this.cart
-          })
-        });
+      await fetch('http://localhost:3000/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customer: this.customer, items: this.cart })
+      });
 
-        alert(
-          `🎨 Thank you ${this.customer.name}!\n` +
-          `Your booking for ${this.cart.length} class(es) is confirmed.\n` +
-          `Total: ${this.totalPrice}`
-        );
+      alert(`Booking confirmed!\nTotal: ${this.totalPrice}`);
 
-        // reset
-        this.cart = [];
-        this.customer = { name: '', email: '', phone: '' };
-        this.showCheckoutForm = false;
-        this.showCart = false;
-
-        // refresh lessons (seats)
-        this.fetchLessons();
-      } catch (err) {
-        console.error('Error placing order', err);
-        alert('Failed to place order. Please try again.');
-      }
+      this.cart = [];
+      this.customer = { name: '', email: '', phone: '' };
+      this.showCheckoutForm = false;
+      this.showCart = false;
+      this.fetchLessons();
     },
 
     openClassInfo(cls) {

@@ -16,27 +16,17 @@
 <body>
 <div id="app">
 
-  <!-- HEADER AND CART BUTTON -->
+  <!-- HEADER -->
   <header>
     <h1>DreamCraft</h1>
-
-    <!-- Cart button only appears when there are items added -->
-    <button
-      class="cart-btn"
-      v-if="cart.length > 0"
-      @click="toggleCart">
+    <button class="cart-btn" v-if="cart.length" @click="toggleCart">
       Cart ({{ cart.length }})
     </button>
   </header>
 
-  <!-- SEARCH & SORT CONTROLS -->
-   <!-- Allows users to search and sort classes -->
-  
+  <!-- SEARCH & SORT -->
   <div class="controls">
-    <input
-      v-model="searchTerm"
-      placeholder="Search classes..."
-    >
+    <input v-model="searchTerm" placeholder="Search classes...">
 
     <select v-model="sortBy">
       <option value="">Sort by</option>
@@ -59,23 +49,17 @@
       class="class-card"
       @click="openClassInfo(cls)"
     >
-      <!-- images come from frontend/images -->
       <img :src="cls.image" :alt="cls.subject">
 
-      <!-- highlight subject -->
       <h2 v-html="highlightText(cls.subject)"></h2>
 
-      <p>
-        <strong>Location:</strong>
+      <p><strong>Location:</strong>
         <span v-html="highlightText(cls.location)"></span>
       </p>
 
-      <p class="seats">
-        <strong>Seats:</strong> {{ cls.seats }}
-      </p>
+      <p class="seats"><strong>Seats:</strong> {{ cls.seats }}</p>
 
-      <p>
-        <strong>Price:</strong>
+      <p><strong>Price:</strong>
         <span v-html="highlightText(cls.price)"></span>
       </p>
 
@@ -87,7 +71,7 @@
     </div>
   </section>
 
-  <!-- CART SIDEBAR -->
+  <!-- CART -->
   <div class="cart-sidebar" :class="{ open: showCart }">
     <div class="cart-header">
       <h2>Your Cart</h2>
@@ -95,23 +79,23 @@
     </div>
 
     <div class="cart-list">
-      <p v-if="cart.length === 0">No classes added yet.</p>
+      <p v-if="!cart.length">No classes added yet.</p>
 
-      <div
-        v-for="(item, index) in cart"
-        :key="index"
-        class="cart-item"
-      >
-        <span>{{ item.subject }} ({{ item.price }})</span>
+      <div v-for="(item, index) in cart" :key="index" class="cart-item">
+        <img :src="item.image" :alt="item.subject" class="cart-image">
+
+        <div>
+          <p><strong>{{ item.subject }}</strong></p>
+          <p>{{ item.price }}</p>
+        </div>
+
         <button @click="removeFromCart(index)">Remove</button>
       </div>
     </div>
 
-    <div class="checkout-area" v-if="cart.length > 0">
+    <div class="checkout-area" v-if="cart.length">
       <p><strong>Total:</strong> {{ totalPrice }}</p>
-      <button class="checkout-btn" @click="openCheckoutForm">
-        Checkout
-      </button>
+      <button class="checkout-btn" @click="openCheckoutForm">Checkout</button>
     </div>
   </div>
 
@@ -120,56 +104,31 @@
     <div class="modal">
       <h3>Checkout Details</h3>
 
-      <input
-        type="text"
-        v-model="customer.name"
-        placeholder="Full Name"
-      >
-      <input
-        type="email"
-        v-model="customer.email"
-        placeholder="Email Address"
-      >
-      <input
-        type="tel"
-        v-model="customer.phone"
-        placeholder="Phone Number"
-        @input="validatePhoneInput"
-      >
+      <input type="text" v-model="customer.name" placeholder="Full Name">
+      <input type="email" v-model="customer.email" placeholder="Email Address">
+      <input type="tel" v-model="customer.phone" placeholder="Phone Number" @input="validatePhoneInput">
 
-      <button @click="confirmCheckout">
-        Confirm Booking
-      </button>
-      <button class="cancel-btn" @click="closeCheckoutForm">
-        Cancel
-      </button>
+      <button @click="confirmCheckout">Confirm Booking</button>
+      <button class="cancel-btn" @click="closeCheckoutForm">Cancel</button>
     </div>
   </div>
 
   <!-- CLASS INFO MODAL -->
-  <div
-    v-if="showInfoModal"
-    class="modal-overlay"
-    @click.self="closeClassInfo"
-  >
+  <div v-if="showInfoModal" class="modal-overlay" @click.self="closeClassInfo">
     <div class="modal">
       <h3>{{ selectedClass.subject }}</h3>
       <p><strong>About:</strong> {{ selectedClass.about }}</p>
       <p><strong>Why Study:</strong> {{ selectedClass.why }}</p>
       <button @click="closeClassInfo">Close</button>
-    </div>serve .
-
+    </div>
   </div>
 
-  <!-- FOOTER -->
   <footer>
-    &copy; 2025 DreamCraft Art & Design School | All Rights Reserved
+    &copy; 2025 DreamCraft Art & Design School
   </footer>
 
 </div>
 
-<!-- Vue logic -->
 <script src="app.js"></script>
 </body>
 </html>
-
