@@ -1,12 +1,12 @@
 body {
     font-family:'Poppins',sans-serif;
     margin:0;
-    background:#ffe6f0; /* Light pink background */
+    background:#ffe6f0; 
     color:#333;
 }
 h1,h2,h3,h4 {margin:0;}
 
-/* ================= HEADER ================= */
+/*  HEADER */
 header {
     background:#4b0082;
     color:#fff;
@@ -32,7 +32,7 @@ header h1 { font-size:24px; font-weight:700; }
 }
 .cart-btn:hover { background:#a18cd1; }
 
-/* ================= SEARCH & SORT ================= */
+/*  SEARCH & SORT  */
 .controls {
     text-align:center;
     margin:20px 0;
@@ -61,7 +61,7 @@ header h1 { font-size:24px; font-weight:700; }
     background:#a18cd1;
 }
 
-/* ================= CLASS GRID ================= */
+/* CLASS GRID */
 .container {
     padding:20px;
     display:grid;
@@ -116,7 +116,7 @@ header h1 { font-size:24px; font-weight:700; }
     cursor:not-allowed;
 }
 
-/* ================= CART SIDEBAR ================= */
+/*CART SIDEBAR */
 .cart-sidebar {
     position:fixed;
     top:0;
@@ -151,7 +151,7 @@ header h1 { font-size:24px; font-weight:700; }
     overflow-y:auto;
 }
 
-/* ✅ UPDATED CART ITEM */
+/* UPDATED CART ITEM */
 .cart-item {
     border-bottom:1px solid #eee;
     padding:12px 0;
@@ -160,7 +160,7 @@ header h1 { font-size:24px; font-weight:700; }
     gap:12px;
 }
 
-/* ✅ CART IMAGE */
+/* CART IMAGE */
 .cart-image {
     width:55px;
     height:55px;
@@ -208,7 +208,7 @@ header h1 { font-size:24px; font-weight:700; }
 }
 .checkout-btn:hover { background:#a18cd1; }
 
-/* ================= MODALS ================= */
+/* MODALS */
 .modal-overlay {
     position:fixed;
     top:0;
@@ -260,7 +260,7 @@ header h1 { font-size:24px; font-weight:700; }
     margin-top:8px;
 }
 
-/* ================= FOOTER ================= */
+/*  FOOTER  */
 footer {
     background:#4b0082;
     color:#fff;
@@ -269,7 +269,7 @@ footer {
     font-size:14px;
 }
 
-/* ================= SEARCH HIGHLIGHT ================= */
+/* SEARCH HIGHLIGHT */
 mark {
     background-color:#fffa65;
     padding:0 4px;
