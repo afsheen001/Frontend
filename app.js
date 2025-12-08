@@ -1,3 +1,6 @@
+// Frontend application logic for cart, search, and checkout
+
+
 new Vue({
   el: '#app',
 
