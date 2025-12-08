@@ -19,6 +19,7 @@ header {
     top:0;
     z-index:50;
 }
+
 header h1 { font-size:24px; font-weight:700; }
 
 .cart-btn {
@@ -116,7 +117,7 @@ header h1 { font-size:24px; font-weight:700; }
     cursor:not-allowed;
 }
 
-/*CART SIDEBAR */
+/* CART SIDEBAR */
 .cart-sidebar {
     position:fixed;
     top:0;
@@ -158,6 +159,12 @@ header h1 { font-size:24px; font-weight:700; }
     display:flex;
     align-items:center;
     gap:12px;
+    transition: background-color 0.3s ease; /* ✅ NEW */
+}
+
+/* ✅ NEW: Cart item hover effect */
+.cart-item:hover {
+    background-color:#f7f7f7;
 }
 
 /* CART IMAGE */
