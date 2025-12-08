@@ -1,33 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Character encoding -->
   <meta charset="UTF-8">
+
+  <!-- Responsive layout for mobile & desktop -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Website title -->
   <title>DreamCraft Art & Design School</title>
 
-  <!-- Vue -->
+  <!-- Vue.js CDN (Vue 2) -->
+  <!-- Allows us to use directives like v-model, v-for, v-if -->
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
-  <!-- Fonts & CSS -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- External CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+
+<!-- Root Vue app container -->
 <div id="app">
 
-  <!-- HEADER -->
+  <!-- ================= HEADER ================= -->
   <header>
-    <h1>DreamCraft</h1>
-    <button class="cart-btn" v-if="cart.length" @click="toggleCart">
+    <!-- Website logo / title -->
+    <h1>Dream Craft school </h1>
+
+    <!-- Cart button (only visible when items exist in cart) -->
+    <button
+      class="cart-btn"
+      v-if="cart.length"
+      @click="toggleCart"
+    >
       Cart ({{ cart.length }})
     </button>
   </header>
 
-  <!-- SEARCH & SORT -->
+  <!--SEARCH & SORT CONTROLS  -->
   <div class="controls">
-    <input v-model="searchTerm" placeholder="Search classes...">
 
+    <!-- Search input -->
+    <input
+      v-model="searchTerm"
+      placeholder="Search classes..."
+    >
+
+    <!-- Dropdown to select sorting attribute -->
     <select v-model="sortBy">
       <option value="">Sort by</option>
       <option value="subject">Subject</option>
@@ -36,99 +59,178 @@
       <option value="seats">Seats</option>
     </select>
 
+    <!-- Toggle sorting order button -->
     <button @click="toggleSort">
       {{ sortOrder === 'asc' ? '↑ Ascending' : '↓ Descending' }}
     </button>
   </div>
 
-  <!-- CLASS GRID -->
+  <!-- CLASS CARDS GRID -->
   <section class="container">
+
+    <!-- Loop through filtered & sorted lessons -->
     <div
       v-for="cls in filteredClasses"
       :key="cls._id"
       class="class-card"
       @click="openClassInfo(cls)"
     >
+
+      <!-- Lesson image -->
       <img :src="cls.image" :alt="cls.subject">
 
+      <!-- Lesson title with highlighted search text -->
       <h2 v-html="highlightText(cls.subject)"></h2>
 
-      <p><strong>Location:</strong>
+      <!-- Lesson location -->
+      <p>
+        <strong>Location:</strong>
         <span v-html="highlightText(cls.location)"></span>
       </p>
 
-      <p class="seats"><strong>Seats:</strong> {{ cls.seats }}</p>
+      <!-- Remaining seats -->
+      <p class="seats">
+        <strong>Seats:</strong> {{ cls.seats }}
+      </p>
 
-      <p><strong>Price:</strong>
+      <!-- Lesson price -->
+      <p>
+        <strong>Price:</strong>
         <span v-html="highlightText(cls.price)"></span>
       </p>
 
+      <!-- Book button (click propagation stopped) -->
       <button
         @click.stop="addToCart(cls)"
-        :disabled="cls.seats === 0">
+        :disabled="cls.seats === 0"
+      >
         Book Class
       </button>
     </div>
   </section>
 
-  <!-- CART -->
+  <!--  CART SIDEBAR -->
   <div class="cart-sidebar" :class="{ open: showCart }">
+
+    <!-- Cart header -->
     <div class="cart-header">
       <h2>Your Cart</h2>
       <button class="close-btn" @click="toggleCart">✖</button>
     </div>
 
+    <!-- Cart items list -->
     <div class="cart-list">
+
+      <!-- Message when cart is empty -->
       <p v-if="!cart.length">No classes added yet.</p>
 
-      <div v-for="(item, index) in cart" :key="index" class="cart-item">
-        <img :src="item.image" :alt="item.subject" class="cart-image">
+      <!-- Loop through cart items -->
+      <div
+        v-for="(item, index) in cart"
+        :key="index"
+        class="cart-item"
+      >
 
+        <!-- Cart item image -->
+        <img
+          :src="item.image"
+          :alt="item.subject"
+          class="cart-image"
+        >
+
+        <!-- Cart item details -->
         <div>
           <p><strong>{{ item.subject }}</strong></p>
           <p>{{ item.price }}</p>
         </div>
 
-        <button @click="removeFromCart(index)">Remove</button>
+        <!-- Remove item from cart -->
+        <button @click="removeFromCart(index)">
+          Remove
+        </button>
       </div>
     </div>
 
+    <!-- Checkout section -->
     <div class="checkout-area" v-if="cart.length">
       <p><strong>Total:</strong> {{ totalPrice }}</p>
-      <button class="checkout-btn" @click="openCheckoutForm">Checkout</button>
+      <button class="checkout-btn" @click="openCheckoutForm">
+        Checkout
+      </button>
     </div>
   </div>
 
   <!-- CHECKOUT MODAL -->
   <div v-if="showCheckoutForm" class="modal-overlay">
     <div class="modal">
+
       <h3>Checkout Details</h3>
 
-      <input type="text" v-model="customer.name" placeholder="Full Name">
-      <input type="email" v-model="customer.email" placeholder="Email Address">
-      <input type="tel" v-model="customer.phone" placeholder="Phone Number" @input="validatePhoneInput">
+      <!-- Customer name -->
+      <input
+        type="text"
+        v-model="customer.name"
+        placeholder="Full Name"
+      >
 
-      <button @click="confirmCheckout">Confirm Booking</button>
-      <button class="cancel-btn" @click="closeCheckoutForm">Cancel</button>
+      <!-- Customer email -->
+      <input
+        type="email"
+        v-model="customer.email"
+        placeholder="Email Address"
+      >
+
+      <!-- Customer phone number (numbers only) -->
+      <input
+        type="tel"
+        v-model="customer.phone"
+        placeholder="Phone Number"
+        @input="validatePhoneInput"
+      >
+
+      <!-- Confirm booking -->
+      <button @click="confirmCheckout">
+        Confirm Booking
+      </button>
+
+      <!-- Cancel checkout -->
+      <button
+        class="cancel-btn"
+        @click="closeCheckoutForm"
+      >
+        Cancel
+      </button>
     </div>
   </div>
 
   <!-- CLASS INFO MODAL -->
-  <div v-if="showInfoModal" class="modal-overlay" @click.self="closeClassInfo">
+  <div
+    v-if="showInfoModal"
+    class="modal-overlay"
+    @click.self="closeClassInfo"
+  >
     <div class="modal">
+
+      <!-- Selected lesson details -->
       <h3>{{ selectedClass.subject }}</h3>
       <p><strong>About:</strong> {{ selectedClass.about }}</p>
       <p><strong>Why Study:</strong> {{ selectedClass.why }}</p>
-      <button @click="closeClassInfo">Close</button>
+
+      <!-- Close modal -->
+      <button @click="closeClassInfo">
+        Close
+      </button>
     </div>
   </div>
 
+  <!--- FOOTER  -->
   <footer>
     &copy; 2025 DreamCraft Art & Design School
   </footer>
 
 </div>
 
+<!-- Vue logic -->
 <script src="app.js"></script>
 </body>
 </html>
