@@ -106,7 +106,7 @@ new Vue({
 
     // Fetch lessons from backend API
     async fetchLessons() {
-      const res = await fetch('http://localhost:3000/lessons');
+      const res = await fetch('https://backend-gq5t.onrender.com/lessons');
       this.lessons = await res.json();
     },
 
@@ -185,7 +185,7 @@ new Vue({
       if (!this.validateEmail(this.customer.email))
         return alert('Invalid email');
 
-      await fetch('http://localhost:3000/orders', {
+      await fetch('https://backend-gq5t.onrender.com/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
